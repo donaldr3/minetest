@@ -112,7 +112,7 @@ s16 item_craft_get_drop_count(const std::string &subname)
 
 bool item_craft_is_cookable(const std::string &subname)
 {
-	if(subname == "lump_of_iron" || subname == "lump_of_clay" || subname == "rat" || subname == "cooked_rat" || subname "raw_rubber")
+	if(subname == "lump_of_iron" || subname == "lump_of_clay" || subname == "rat" || subname == "cooked_rat" || subname == "raw_rubber")
 		return true;
 		
 	return false;
