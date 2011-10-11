@@ -38,6 +38,15 @@ InventoryItem *craft_get_result(InventoryItem **items)
 			return new MaterialItem(CONTENT_WOOD, 4);
 		}
 	}
+	//Raw Rubber
+	{
+		ItemSpec specs[9];
+		specs[0] = ItemSpec(ITEM_MATERIAL, CONTENT_RUBBERTREE);
+		if(checkItemCombination(items, specs))
+		{
+			return new CraftItem("raw_rubber", 4);
+		}
+	}
 
 	// Stick
 	{
