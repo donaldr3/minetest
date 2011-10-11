@@ -245,6 +245,92 @@ static void make_jungletree(VoxelManipulator &vmanip, v3s16 p0)
 	}
 }
 
+static void make_rubbertree(VoxelManipulator &vmanip, v3s16 p0)
+{
+	MapNode treenode(CONTENT_RUBBERTREE);
+	MapNode leavesnode(CONTENT_LEAVES);
+
+	for(s16 x=-1; x<=1; x++)
+	for(s16 z=-1; z<=1; z++)
+	{
+		if(myrand_range(0, 2) == 0)
+			continue;
+		v3s16 p1 = p0 + v3s16(x,0,z);
+		v3s16 p2 = p0 + v3s16(x,-1,z);
+		if(vmanip.m_area.contains(p2)
+				&& vmanip.m_data[vmanip.m_area.index(p2)] == CONTENT_AIR)
+			vmanip.m_data[vmanip.m_area.index(p2)] = treenode;
+		else if(vmanip.m_area.contains(p1))
+			vmanip.m_data[vmanip.m_area.index(p1)] = treenode;
+	}
+
+	s16 trunk_h = myrand_range(8, 12);
+	v3s16 p1 = p0;
+	for(s16 ii=0; ii<trunk_h; ii++)
+	{
+		if(vmanip.m_area.contains(p1))
+			vmanip.m_data[vmanip.m_area.index(p1)] = treenode;
+		p1.Y++;
+	}
+
+	// p1 is now the last piece of the trunk
+	p1.Y -= 1;
+
+	VoxelArea leaves_a(v3s16(-3,-2,-3), v3s16(3,2,3));
+	//SharedPtr<u8> leaves_d(new u8[leaves_a.getVolume()]);
+	Buffer<u8> leaves_d(leaves_a.getVolume());
+	for(s32 i=0; i<leaves_a.getVolume(); i++)
+		leaves_d[i] = 0;
+
+	// Force leaves at near the end of the trunk
+	{
+		s16 d = 1;
+		for(s16 z=-d; z<=d; z++)
+		for(s16 y=-d; y<=d; y++)
+		for(s16 x=-d; x<=d; x++)
+		{
+			leaves_d[leaves_a.index(v3s16(x,y,z))] = 1;
+		}
+	}
+
+	// Add leaves randomly
+	for(u32 iii=0; iii<30; iii++)
+	{
+		s16 d = 1;
+
+		v3s16 p(
+			myrand_range(leaves_a.MinEdge.X, leaves_a.MaxEdge.X-d),
+			myrand_range(leaves_a.MinEdge.Y, leaves_a.MaxEdge.Y-d),
+			myrand_range(leaves_a.MinEdge.Z, leaves_a.MaxEdge.Z-d)
+		);
+
+		for(s16 z=0; z<=d; z++)
+		for(s16 y=0; y<=d; y++)
+		for(s16 x=0; x<=d; x++)
+		{
+			leaves_d[leaves_a.index(p+v3s16(x,y,z))] = 1;
+		}
+	}
+
+	// Blit leaves to vmanip
+	for(s16 z=leaves_a.MinEdge.Z; z<=leaves_a.MaxEdge.Z; z++)
+	for(s16 y=leaves_a.MinEdge.Y; y<=leaves_a.MaxEdge.Y; y++)
+	for(s16 x=leaves_a.MinEdge.X; x<=leaves_a.MaxEdge.X; x++)
+	{
+		v3s16 p(x,y,z);
+		p += p1;
+		if(vmanip.m_area.contains(p) == false)
+			continue;
+		u32 vi = vmanip.m_area.index(p);
+		if(vmanip.m_data[vi].getContent() != CONTENT_AIR
+				&& vmanip.m_data[vi].getContent() != CONTENT_IGNORE)
+			continue;
+		u32 i = leaves_a.index(x,y,z);
+		if(leaves_d[i] == 1)
+			vmanip.m_data[vi] = leavesnode;
+	}
+}
+
 void make_papyrus(VoxelManipulator &vmanip, v3s16 p0)
 {
 	MapNode papyrusnode(CONTENT_PAPYRUS);
@@ -2147,7 +2233,10 @@ void make_block(BlockMakeData *data)
 						make_tree(vmanip, p, is_apple_tree);
 					}
 					else
-						make_jungletree(vmanip, p);
+						if(myrand_range(0,4) != 0)
+							make_jungletree(vmanip, p);
+						else
+							make_rubbertree(vmanip, p); //just replaced make_jungletree
 				}
 				// Cactii grow only on sand, on land
 				else if(n->getContent() == CONTENT_SAND && y > WATER_LEVEL + 2)
