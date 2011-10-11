@@ -469,6 +469,18 @@ InventoryItem *craft_get_result(InventoryItem **items)
 			return new CraftItem("apple_iron", 1);
 		}
 	}
+	//Rubber Boots
+	{
+		ItemSpec specs[9];
+		specs[1] = ItemSpec(ITEM_CRAFT, "vulcan_rubber");
+		specs[4] = ItemSpec(ITEM_CRAFT, "vulcan_rubber");
+		specs[6] = ItemSpec(ITEM_CRAFT, "vulcan_rubber");
+		specs[7] = ItemSpec(ITEM_CRAFT, "vulcan_rubber");
+		if(checkItemCombination(items, specs))
+		{
+			return new CraftItem("rubber_boots", 1);
+		}
+	}
 
 	return NULL;
 }
