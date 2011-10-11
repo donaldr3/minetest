@@ -215,6 +215,16 @@ void content_mapnode_init()
 	f->dug_item = std::string("MaterialItem2 ")+itos(i)+" 1";
 	setWoodLikeDiggingProperties(f->digging_properties, 1.0);
 	
+	i = CONTENT_RUBBERTREE;
+	f = &content_features(i);
+	f->setAllTextures("rubbertree.png");
+	f->setTexture(0, "rubbertree.png");
+	f->setTexture(1, "rubbertree.png");
+	f->param_type = CPT_MINERAL;
+	//f->is_ground_content = true;
+	f->dug_item = std::string("MaterialItem2 ")+itos(i)+" 1";
+	setWoodLikeDiggingProperties(f->digging_properties, 1.0);
+	
 	i = CONTENT_JUNGLEGRASS;
 	f = &content_features(i);
 	f->setInventoryTexture("junglegrass.png");
