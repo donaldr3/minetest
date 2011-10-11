@@ -80,7 +80,7 @@ std::string item_craft_get_image_name(const std::string &subname)
 	else if(subname == "vulcan_rubber")
 		return "vulcan_rubber.png";
 	else if(subname == "rubber_boots")
-		return "rubber_boots.png")
+		return "rubber_boots.png";
 	else
 		return "cloud.png"; // just something
 }
